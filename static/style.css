@@ -2,20 +2,16 @@
    1. Variabel Global & Reset
    ========================================= */
 :root {
-    /* Palet Warna Netral & Hangat */
-    --bg-body: #f8f8f6;       /* Latar belakang (warm off-white) */
-    --bg-container: #ffffff;  /* Latar kartu, modal, sidebar */
-    --text-primary: #333333;  /* Teks utama (dark grey, not pure black) */
-    --text-secondary: #888888;/* Teks abu-abu (subteks, placeholder) */
-    --border-color: #eaeaea;  /* Warna border/garis pemisah */
+    --bg-body: #f8f8f6;
+    --bg-container: #ffffff;
+    --text-primary: #333333;
+    --text-secondary: #888888;
+    --border-color: #eaeaea;
+    --accent-primary: #4a4a4a;
+    --accent-primary-hover: #222222;
+    --accent-secondary: #f0f0f0;
+    --accent-danger: #e74c3c;
     
-    /* Warna Aksen Minimalis */
-    --accent-primary: #4a4a4a; /* Aksen utama (charcoal grey) - sangat netral */
-    --accent-primary-hover: #222222; /* Saat di-hover */
-    --accent-secondary: #f0f0f0; /* Tombol sekunder (light grey) */
-    --accent-danger: #e74c3c;   /* Untuk notifikasi/hapus nanti */
-    
-    /* Tipografi & Ukuran */
     --font-main: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --radius-small: 8px;
     --radius-medium: 12px;
@@ -23,60 +19,54 @@
     --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Reset Dasar */
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     font-family: var(--font-main);
     background-color: var(--bg-body);
     color: var(--text-primary);
     margin: 0;
-    /* Memberi ruang di bawah untuk Mobile Tab Bar */
-    padding-bottom: 80px; 
 }
 
-h1, h2, h3, h4, h5, h6 {
-    margin: 0 0 1rem 0;
-    font-weight: 600;
-}
-
-a {
-    color: var(--accent-primary);
-    text-decoration: none;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-input, textarea, button {
-    font-family: var(--font-main);
-}
+h1, h2, h3 { margin: 0 0 1rem 0; font-weight: 600; }
+a { color: var(--accent-primary); text-decoration: none; }
+ul { list-style: none; padding: 0; margin: 0; }
 
 /* =========================================
-   2. Layout & Header (Mobile-First)
+   2. Layout & Header Mobile
    ========================================= */
+
+/* Ini adalah logika BARU untuk sidebar (menggunakan transform) */
 .sidebar {
-    display: none; /* Sembunyi di mobile */
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 260px; /* (lebar sidebar Anda) */
+    height: 100%;
+    z-index: 300;
+    background: var(--bg-container);
+    padding: 30px;
+    border-right: 1px solid var(--border-color);
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    
+    /* 1. Sembunyikan dia di luar layar (ke kiri) */
+    transform: translateX(-100%);
+    
+    /* 2. Beri transisi saat 'transform' berubah */
+    transition: transform 0.3s ease-out;
+    
+    /* 3. Sembunyikan agar tidak bisa diklik saat tersembunyi */
+    visibility: hidden;
 }
 
-.app-container {
-    width: 100%;
-}
-
-.main-content {
-    padding: 20px;
-}
+.app-container { width: 100%; }
 
 .app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 15px 15px;
     background: var(--bg-container);
     border-bottom: 1px solid var(--border-color);
     position: sticky;
@@ -84,92 +74,112 @@ input, textarea, button {
     z-index: 100;
 }
 
-.logo {
-    font-weight: 700;
-    font-size: 1.2rem;
+.header-icon-btn {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+.header-icon-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.app-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
     color: var(--text-primary);
 }
 
-.user-profile span {
+.search-bar-container {
+    background: var(--bg-container);
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 57px;
+    z-index: 99;
+    display: none; 
+}
+.search-bar-container.show {
     display: block;
-    width: 36px;
-    height: 36px;
-    background: var(--accent-secondary);
-    color: var(--text-secondary);
-    border-radius: 50%;
-    text-align: center;
-    line-height: 36px;
-    font-weight: 600;
+}
+.search-bar-container input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: var(--radius-small);
+    border: 1px solid var(--border-color);
+    font-size: 1rem;
 }
 
 /* =========================================
-   3. Konten Dashboard (Kartu, Search)
+   3. Konten Dashboard & Footer
    ========================================= */
-.restock-section h3 {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    margin-bottom: 15px;
+.main-content {
+    padding: 20px;
+    padding-bottom: 110px;
 }
 
-.card-scroll-container {
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    padding-bottom: 15px; /* Ruang untuk shadow */
-    /* Sembunyikan scrollbar */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* IE/Edge */
-}
-.card-scroll-container::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+.restock-section h3 { font-size: 1.1rem; margin-bottom: 15px; }
+.card-scroll-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
+.card-scroll-container::-webkit-scrollbar { display: none; }
+.restock-card { background: var(--bg-container); border: 1px solid var(--border-color); border-radius: var(--radius-medium); padding: 15px; min-width: 160px; box-shadow: var(--shadow-soft); }
+.restock-card strong { display: block; margin-bottom: 4px; }
+.restock-card span { color: var(--text-secondary); font-size: 0.9rem; }
+
+.desktop-actions {
+    display: none;
 }
 
-.restock-card {
-    background: var(--bg-container);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-medium);
-    padding: 15px;
-    min-width: 160px;
-    box-shadow: var(--shadow-soft);
-}
-
-.restock-card strong {
-    display: block;
-    margin-bottom: 4px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.restock-card span {
+.app-footer {
+    text-align: center;
+    margin-top: 40px;
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
-.search-section {
-    margin: 25px 0;
-}
-
-.search-section input {
+/* =========================================
+   4. Tombol Aksi Mobile
+   ========================================= */
+.mobile-action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    padding: 14px 16px;
-    font-size: 1rem;
-    border-radius: var(--radius-medium);
-    border: 1px solid var(--border-color);
     background: var(--bg-container);
-    /*-webkit-appearance: none; /* Hapus style iOS */
-}
-.search-section input:focus {
-    outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 2px rgba(74, 74, 74, 0.2);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
+    padding: 12px 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    z-index: 98;
 }
 
-.desktop-actions {
-    display: none; /* Sembunyi di mobile */
+.mobile-action-bar .btn {
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--radius-medium);
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
 }
+
+.btn-primary-mobile {
+    background: var(--accent-primary);
+    color: white;
+}
+.btn-secondary-mobile {
+    background: var(--accent-secondary);
+    color: var(--text-primary);
+}
+
 
 /* =========================================
-   4. Tombol Global
+   5. Tombol Global & Modal
    ========================================= */
 .btn {
     display: inline-block;
@@ -180,265 +190,97 @@ input, textarea, button {
     font-weight: 600;
     font-size: 0.95rem;
     transition: all 0.2s ease;
-    text-align: center;
 }
+.btn-primary { background: var(--accent-primary); color: white; }
+.btn-primary:hover { background: var(--accent-primary-hover); }
+.btn-secondary { background: var(--accent-secondary); color: var(--text-primary); border: 1px solid var(--border-color); }
+.btn-secondary:hover { background: #e0e0e0; }
 
-.btn-primary {
-    background: var(--accent-primary);
-    color: white;
-}
-.btn-primary:hover {
-    background: var(--accent-primary-hover);
-}
-
-.btn-secondary {
-    background: var(--accent-secondary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-.btn-secondary:hover {
-    background: #e0e0e0; /* Sedikit lebih gelap */
-}
-
-/* =========================================
-   5. Navigasi Mobile (FAB & Tab Bar)
-   ========================================= */
-.fab-container {
-    position: fixed;
-    bottom: 80px; /* Di atas tab bar */
-    right: 20px;
-    z-index: 99;
-}
-
-.fab-container .fab {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--accent-primary);
-    color: white;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease;
-}
-.fab-container .fab:hover {
-    transform: scale(1.05);
-}
-
-.mobile-tab-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: var(--bg-container);
-    display: flex;
-    justify-content: space-around;
-    border-top: 1px solid var(--border-color);
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
-    padding: 10px 0;
-    z-index: 98;
-}
-
-.mobile-tab-bar .tab-item {
-    text-align: center;
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-.mobile-tab-bar .tab-item.active {
-    color: var(--accent-primary);
-    font-weight: 600;
-}
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; opacity: 0; visibility: hidden; transition: all 0.2s ease; }
+.modal-overlay.show { opacity: 1; visibility: visible; }
+.modal-content { background: var(--bg-container); padding: 25px; border-radius: var(--radius-large); width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transform: scale(0.95); transition: all 0.2s ease; }
+.modal-overlay.show .modal-content { transform: scale(1); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-header h3 { margin: 0; }
+.close-modal { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--text-secondary); padding: 0; line-height: 1; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; }
+.form-group input, .form-group textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: var(--radius-small); background: var(--bg-body); font-size: 1rem; }
+.amount-input { display: flex; gap: 10px; }
+.amount-input input { flex-grow: 1; }
+.amount-input .satuan { padding: 12px; background: var(--accent-secondary); border-radius: var(--radius-small); font-weight: 500; color: var(--text-secondary); }
+.modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
 
 /* =========================================
-   6. Modal (Pop-up) Input
-   ========================================= */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
-    
-    /* Untuk Animasi */
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease-in-out;
-}
-
-.modal-overlay.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-content {
-    background: var(--bg-container);
-    padding: 25px;
-    border-radius: var(--radius-large);
-    width: 100%;
-    max-width: 450px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    
-    /* Untuk Animasi */
-    transform: scale(0.95);
-    transition: all 0.2s ease-in-out;
-}
-.modal-overlay.show .modal-content {
-    transform: scale(1);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-.modal-header h3 {
-    margin: 0;
-    font-weight: 600;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: var(--text-secondary);
-    padding: 0;
-    line-height: 1;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    font-size: 0.9rem;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-small);
-    background: var(--bg-body); /* Sedikit beda dari bg modal */
-    font-size: 1rem;
-    /*-webkit-appearance: none;/* Hapus style iOS */
-}
-.form-group textarea {
-    min-height: 80px;
-    resize: vertical;
-}
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--accent-primary);
-    background: var(--bg-container);
-}
-
-.amount-input {
-    display: flex;
-    gap: 10px;
-}
-.amount-input input {
-    flex-grow: 1;
-}
-.amount-input .satuan {
-    padding: 12px;
-    background: var(--accent-secondary);
-    border-radius: var(--radius-small);
-    font-weight: 500;
-    color: var(--text-secondary);
-}
-
-.modal-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 tombol sejajar */
-    gap: 10px;
-    margin-top: 25px;
-}
-
-
-/* =========================================
-   7. Tampilan Desktop (Media Query)
+   6. Tampilan Desktop (Responsif)
    ========================================= */
 @media (min-width: 768px) {
-    body {
-        padding-bottom: 0; /* Hapus padding mobile */
-    }
-    
-    .app-container {
-        display: flex;
+    /* Sembunyikan elemen mobile */
+    .app-header,
+    .search-bar-container,
+    .mobile-action-bar {
+        display: none;
     }
 
-    /* Tampilkan Sidebar */
+    /* Tampilkan Sidebar Desktop */
     .sidebar {
         display: block;
         width: 240px;
-        background: var(--bg-container);
-        padding: 30px;
         height: 100vh;
-        border-right: 1px solid var(--border-color);
-        position: fixed; /* Tetap di kiri */
+        position: fixed;
         left: 0;
         top: 0;
+        z-index: 200;
+        
+        /* Reset semua style 'mobile' */
+        transform: translateX(0);
+        visibility: visible;
+        box-shadow: none;
+        padding: 30px;
     }
+    .sidebar nav a { display: block; padding: 12px 10px; color: var(--text-secondary); font-weight: 500; border-radius: var(--radius-small); }
+    .sidebar nav a:hover { background: var(--accent-secondary); }
+    .sidebar nav a.active { color: var(--text-primary); font-weight: 600; background: var(--accent-secondary); }
 
-    .sidebar .logo {
-        margin-bottom: 30px;
-    }
-    
-    .sidebar nav a {
-        display: block;
-        padding: 12px 0;
-        color: var(--text-secondary);
-        font-weight: 500;
-        border-radius: var(--radius-small);
-        padding-left: 10px;
-    }
-    .sidebar nav a:hover {
-        background: var(--accent-secondary);
-    }
-    .sidebar nav a.active {
-        color: var(--text-primary);
-        font-weight: 600;
-        background: var(--accent-secondary);
-    }
-
-    /* Geser konten utama ke kanan */
+    /* Geser konten utama */
     .main-content {
-        flex-grow: 1;
-        margin-left: 240px; /* Se-lebar sidebar */
+        margin-left: 240px;
         padding: 40px;
-    }
-
-    /* Sembunyikan elemen mobile di desktop */
-    .app-header,
-    .fab-container,
-    .mobile-tab-bar {
-        display: none;
+        padding-bottom: 40px;
     }
     
     /* Tampilkan tombol aksi desktop */
     .desktop-actions {
         display: flex;
         gap: 10px;
-        margin-top: 20px;
+        margin-top: 30px;
     }
     
-    .modal-content {
-        padding: 30px;
+    .app-footer {
+        text-align: left;
+        margin-left: 0;
     }
+}
+
+/* =========================================
+   7. Tambahan untuk JS (Sidebar Mobile)
+   ========================================= */
+
+/* Kode ini sekarang akan menggeser sidebar ke dalam layar */
+.sidebar.show {
+    transform: translateX(0);
+    visibility: visible;
+}
+
+.app-container.sidebar-open {
+    /* 1. Ini adalah "styling" yang hilang: 
+          buat kontennya jadi redup dan blur */
+    filter: brightness(0.5) blur(2px);
+    
+    /* 2. (PENTING!) Matikan interaksi dengan konten
+          agar tidak bisa diklik saat redup */
+    pointer-events: none;
+    
+    /* 3. Beri transisi agar mulus */
+    transition: filter 0.3s ease-out;
 }
