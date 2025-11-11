@@ -1,115 +1,79 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pa Wawan</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-</head>
-<body>
+{% extends "layout.html" %}
 
-    <aside class="sidebar" id="sidebar">
-        <div class="logo" style="margin-bottom: 30px;">Sistem Pa Wawan</div>
-        <nav>
-            <ul>
-                <li><a href="#" class="active">Dashboard</a></li>
-                <li><a href="#">Daftar Barang</a></li>
-                <li><a href="#">Laporan</a></li>
-            </ul>
-        </nav>
-    </aside>
+{% block title %}Dashboard - Sistem Pa Wawan{% endblock %}
 
-    <div class="app-container">
+{% block page_title %}Dashboard{% endblock %}
 
-        <main class="main-content">
-            
-            <header class="app-header">
-                <button class="header-icon-btn" id="sidebarToggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </button>
-                
-                <h1 class="app-title">Sistem Pa Wawan</h1>
+{% block content %}
 
-                <button class="header-icon-btn" id="searchToggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                </button>
-            </header>
+    <section class="greeting" style="margin-top: 20px;">
+        <h2>Halo, {% if user %}{{user.nama_lengkap}}{% else %}Pengguna{% endif %}👋 </h2>
+    </section>
 
-            <div class="search-bar-container" id="searchBarContainer">
-                <input type="search" placeholder="Cari barang...">
-            </div>
-
-            <section class="greeting" style="margin-top: 20px;">
-                <h2>Halo, [Nama HR] 👋</h2>
-            </section>
-
-            <section class="restock-section">
-                <h3>Perlu Segera Restock</h3>
-                <div class="card-scroll-container">
-                    <div class="restock-card">
-                        <strong>Kopi Gula Aren</strong>
-                        <span>Sisa: 1 box</span>
-                    </div>
-                    <div class="restock-card">
-                        <strong>Spidol Boardmarker</strong>
-                        <span>Sisa: 3 pcs</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="desktop-actions">
-                <button class="btn btn-primary" id="btnShowModalMasuk">+ Catat Barang Masuk</button>
-                <button class="btn btn-secondary" id="btnShowModalKeluar">- Catat Barang Keluar</button>
-            </section>
-
-            <footer class="app-footer">
-                by ziel
-            </footer>
-
-        </main>
-    </div>
-
-    <div class="mobile-action-bar">
-        <button class="btn btn-primary-mobile" id="btnModalMasukMobile">
-            + Barang Masuk
-        </button>
-        <button class="btn btn-secondary-mobile" id="btnModalKeluarMobile">
-            - Barang Keluar
-        </button>
-    </div>
-
-
-    <div id="inputModalOverlay" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Catat Barang</h3>
-                <button class="close-modal" id="btnCloseModal">&times;</button>
-            </div>
-            <form id="transactionForm">
-                <input type="hidden" id="transactionType" value="keluar">
-                <div class="form-group">
-                    <label for="searchItem">Barang Apa?</label>
-                    <input type="text" id="searchItem" placeholder="Ketik nama barang...">
-                </div>
-                <div class="form-group">
-                    <label for="itemAmount">Jumlah</label>
-                    <div class="amount-input">
-                        <input type="number" id="itemAmount" value="1" min="1">
-                        <span id="itemUnit" class="satuan">pcs</span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="itemNotes">Keterangan (Opsional)</label>
-                    <textarea id="itemNotes" placeholder="Cth: Diambil staf Admin"></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="btnCancelModal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </form>
+    <section class="restock-section">
+        <h3>Perlu Segera Restock</h3>
+        <div class="card-scroll-container">
+    </section>
+        {% for barang in daftar_restock %}
+        <div class="restock card">
+            <strong>{{ barang.nama_barang }}</strong>
+            <span>Sisa : {{ barang.satuan }}</span>
         </div>
+        {% endfor %}
+
+        {% if not daftar_restock %}
+        <p>Tidak ada barang yang perlu direstock.</p>
+        {% endif %}
+        
+    <section class="desktop-actions">
+        <button class="btn btn-primary" id="btnShowModalMasuk">+ Catat Barang Masuk</button>
+        <button class="btn btn-secondary" id="btnShowModalKeluar">- Catat Barang Keluar</button>
+    </section>
+
+{% endblock %}
+
+{% block mobile_actions %}
+<div class="mobile-action-bar">
+    <button class="btn btn-primary-mobile" id="btnModalMasukMobile">
+        + Barang Masuk
+    </button>
+    <button class="btn btn-secondary-mobile" id="btnModalKeluarMobile">
+        - Barang Keluar
+    </button>
+</div>
+{% endblock %}
+
+{% block modals %}
+<div id="inputModalOverlay" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Catat Barang</h3>
+            <button class="close-modal" id="btnCloseModal">&times;</button>
+        </div>
+        
+        <form id="transactionForm">
+            <input type="hidden" id="transactionType" value="keluar">
+            <div class="form-group">
+                <label for="searchItem">Barang Apa?</label>
+                <input type="text" id="searchItem" placeholder="Ketik nama barang...">
+            </div>
+            <div class="form-group">
+                <label for="itemAmount">Jumlah</label>
+                <div class="amount-input">
+                    <input type="number" id="itemAmount" value="1" min="1">
+                    <span id="itemUnit" class="satuan">pcs</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="itemNotes">Keterangan (Opsional)</label>
+                <textarea id="itemNotes" placeholder="Cth: Diambil staf Admin"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="btnCancelModal">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
+        
     </div>
-    
-    </body>
-</html>
+</div>
+{% endblock %}

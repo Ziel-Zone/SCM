@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block title %}Laporan - Sistem Pa Wawan{% endblock %}
+
+{% block page_title %}Laporan{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <h2>Laporan Bulanan</h2>
+        <button class="btn btn-primary" id="btnExportReport">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Ekspor ke PDF
+        </button>
+    </div>
+
+    <section class="filter-section">
+        <form class="report-filter-form">
+            <div class="form-group">
+                <label for="filterBulan">Bulan</label>
+                <select id="filterBulan" name="bulan">
+                    <option value="1">Januari</option>
+                    <option value="2">Februari</option>
+                    <option value="3">Maret</option>
+                    <option value="4">April</option>
+                    <option value="5">Mei</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">Agustus</option>
+                    <option value="9">September</option>
+                    <option value="10" selected>Oktober</option> <option value="11">November</option>
+                    <option value="12">Desember</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filterTahun">Tahun</label>
+                <select id="filterTahun" name="tahun">
+                    <option value="2025" selected>2025</option>
+                    <option value="2024">2024</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Tampilkan</button>
+        </form>
+    </section>
+
+    <section class="summary-section">
+        <h3>Ringkasan untuk: Oktober 2025</h3>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <span>Total Barang Masuk</span>
+                <strong>150 <small>item</small></strong>
+            </div>
+            <div class="summary-card">
+                <span>Total Barang Keluar</span>
+                <strong>85 <small>item</small></strong>
+            </div>
+            <div class="summary-card">
+                <span>Item Terbanyak Keluar</span>
+                <strong>Kopi Gula Aren</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="report-details">
+        <h3>Detail Stok Per Barang</h3>
+        <div class="table-responsive-container">
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Nama Barang</th>
+                        <th>Stok Awal</th>
+                        <th>Masuk</th>
+                        <th>Keluar</th>
+                        <th>Stok Akhir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Kertas A4 70gr</td>
+                        <td>15</td>
+                        <td><span class="text-masuk">+20</span></td>
+                        <td><span class="text-keluar">-10</span></td>
+                        <td><strong>25</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Kopi Gula Aren</td>
+                        <td>5</td>
+                        <td><span class="text-masuk">+30</span></td>
+                        <td><span class="text-keluar">-30</span></td>
+                        <td><strong>5</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Spidol Boardmarker</td>
+                        <td>10</td>
+                        <td><span class="text-masuk">+0</span></td>
+                        <td><span class="text-keluar">-7</span></td>
+                        <td><strong>3</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+{% endblock %}

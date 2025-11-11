@@ -45,6 +45,7 @@ class Product(db.Model):
     sku = db.Column(db.String(100), unique=True, nullable=True)
     satuan= db.Column(db.String(50), nullable=False)
     kategori = db.Column(db.String(100), nullable=True)
+    stok = db.Column(db.Integer, nullable=False, default=0)
     stock_minimum = db.Column(db.Integer, nullable=True,default=0)
     deskripsi = db.Column(db.Text, nullable=True)
 
@@ -84,4 +85,22 @@ class Transaction(db.Model):
     
 @app.route('/')
 def dashboard():
-    return render_template('dashboard.html')
+    user_sekarang=User.query.get(1)  # Contoh: ambil user dengan ID 1
+    barang_restock=Product.query.limit(5).all()  # Contoh: ambil 5 barang pertama
+    return render_template(
+        'dashboard.html',
+        user=user_sekarang,
+        barang_restock=barang_restock
+    )
+
+
+@app.route('/daftar-barang')
+def daftar_barang():
+    # (Logika ambil barang Anda)
+    return render_template('daftar-barang.html')
+
+@app.route('/laporan')
+def laporan():
+    # (Logika ambil laporan Anda)
+    return render_template('laporan.html')
+

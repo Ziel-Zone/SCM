@@ -1,151 +1,30 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Barang - Sistem Pa Wawan</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+{% extends "layout.html" %}
 
-    <aside class="sidebar" id="sidebar">
-        <div class="logo" style="margin-bottom: 30px;">Sistem Pa Wawan</div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Dashboard</a></li> 
-                <li><a href="daftar-barang.html" class="active">Daftar Barang</a></li>
-                <li><a href="#">Laporan</a></li>
-            </ul>
-        </nav>
-    </aside>
+{% block title %}Daftar Barang - Sistem Pa Wawan{% endblock %}
 
-    <div class="app-container">
-        <main class="main-content">
-            
-            <header class="app-header">
-                <button class="header-icon-btn" id="sidebarToggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </button>
-                <h1 class="app-title">Daftar Barang</h1> <button class="header-icon-btn" id="searchToggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                </button>
-            </header>
+{% block page_title %}Daftar Barang{% endblock %}
 
-            <div class="search-bar-container" id="searchBarContainer">
-                <input type="search" placeholder="Cari barang...">
-            </div>
+{% block content %}
 
-            <div class="page-header">
-                <h2>Semua Barang</h2>
-                <button class="btn btn-primary" id="btnShowProductModalDesktop">+ Tambah Barang Baru</button>
-            </div>
-
-            <div class="item-list-container">
-                
-                <div class="item-card">
-                    <div class="item-card-header">
-                        <h3>Kertas A4 70gr</h3>
-                        <button class="item-action-btn">⋮</button> </div>
-                    <div class="item-card-body">
-                        <div class="item-stock-info">
-                            <strong>10</strong>
-                            <span>rim</span>
-                        </div>
-                        <div class="item-meta-info">
-                            <span>Kategori: ATK</span>
-                            <span>Min. Stok: 5</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="item-card">
-                    <div class="item-card-header">
-                        <h3>Kopi Gula Aren (Sachet)</h3>
-                        <button class="item-action-btn">⋮</button>
-                    </div>
-                    <div class="item-card-body">
-                        <div class="item-stock-info">
-                            <strong>1</strong>
-                            <span>box</span>
-                        </div>
-                        <div class="item-meta-info">
-                            <span>Kategori: Konsumsi</span>
-                            <span>Min. Stok: 2</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="item-card">
-                    <div class="item-card-header">
-                        <h3>Spidol Boardmarker Hitam</h3>
-                        <button class="item-action-btn">⋮</button>
-                    </div>
-                    <div class="item-card-body">
-                        <div class="item-stock-info">
-                            <strong>3</strong>
-                            <span>pcs</span>
-                        </div>
-                        <div class="item-meta-info">
-                            <span>Kategori: ATK</span>
-                            <span>Min. Stok: 5</span>
-                        </div>
-                    </div>
-                </div>
-
-                </div>
-
-            <footer class="app-footer">
-                by ziel
-            </footer>
-
-        </main>
+    <div class="page-header">
+        <h2>Semua Barang</h2>
+        <button class="btn btn-primary" id="btnShowProductModalDesktop">+ Tambah Barang Baru</button>
     </div>
 
-    <div class="mobile-action-bar single-button"> <button class="btn btn-primary-mobile" id="btnShowProductModalMobile">
+    <div class="item-list-container">
+        </div>
+
+{% endblock %}
+
+{% block mobile_actions %}
+    <div class="mobile-action-bar single-button">
+        <button class="btn btn-primary-mobile" id="btnShowProductModalMobile">
             + Tambah Barang Baru
         </button>
     </div>
+{% endblock %}
 
-    <div id="productModalOverlay" class="modal-overlay"> <div class="modal-content">
-            
-            <div class="modal-header">
-                <h3 id="productModalTitle">Tambah Barang Baru</h3>
-                <button class="close-modal" id="btnCloseProductModal">&times;</button>
-            </div>
-            
-            <form id="productForm">
-                <div class="form-group">
-                    <label for="productName">Nama Barang</label>
-                    <input type="text" id="productName" required>
-                </div>
-                
-                <div class="form-group-split">
-                    <div class="form-group">
-                        <label for="productUnit">Satuan</label>
-                        <input type="text" id="productUnit" placeholder="Cth: pcs, rim, box" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="productCategory">Kategori</label>
-                        <input type="text" id="productCategory" placeholder="Cth: ATK, Konsumsi">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="productMinStock">Stok Minimum</label>
-                    <input type="number" id="productMinStock" value="0" min="0">
-                    <small>Sistem akan memberi notifikasi jika stok di bawah angka ini.</small>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="btnCancelProductModal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan Barang</button>
-                </div>
-            </form>
-
+{% block modals %}
+    <div id="productModalOverlay" class="modal-overlay">
         </div>
-    </div>
-    
-    <script src="app.js"></script>
-
-</body>
-</html>
+{% endblock %}

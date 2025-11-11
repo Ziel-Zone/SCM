@@ -1,164 +1,64 @@
-    // Menunggu sampai semua elemen HTML dimuat sebelum menjalankan JS
-    document.addEventListener('DOMContentLoaded', () => {
+// Menunggu sampai semua elemen HTML dimuat sebelum menjalankan JS
+document.addEventListener('DOMContentLoaded', () => {
 
-        // --- 1. Seleksi Elemen dari HTML ---
-        
-        // Header & Navigasi (Poin 3)
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const searchToggle = document.getElementById('searchToggle');
-        const searchBarContainer = document.getElementById('searchBarContainer');
-        const appContainer = document.querySelector('.app-container')
-
-        // Modal (Poin 2)
-        const modalOverlay = document.getElementById('inputModalOverlay');
-        const modalTitle = document.getElementById('modalTitle');
-        const transactionTypeInput = document.getElementById('transactionType');
-        const btnCloseModal = document.getElementById('btnCloseModal');
-        const btnCancelModal = document.getElementById('btnCancelModal');
-
-        // Tombol Aksi Pembuka Modal (Poin 2)
-        const btnModalMasukMobile = document.getElementById('btnModalMasukMobile');
-        const btnModalKeluarMobile = document.getElementById('btnModalKeluarMobile');
-        const btnShowModalMasuk = document.getElementById('btnShowModalMasuk'); // Desktop
-        const btnShowModalKeluar = document.getElementById('btnShowModalKeluar'); // Desktop
-
-        // Form
-        const transactionForm = document.getElementById('transactionForm');
-
-        
-        // --- 2. Fungsi Logika ---
-
-        /**
-         * Membuka Modal dan Mengaturnya (Masuk/Keluar)
-         * @param {string} type - 'masuk' atau 'keluar'
-         * @param {string} title - Judul yang akan ditampilkan di modal
-         */
-        const openModal = (type, title) => {
-            modalTitle.textContent = title;
-            transactionTypeInput.value = type;
-            modalOverlay.classList.add('show');
-            // Reset form setiap kali dibuka (opsional tapi bagus)
-            transactionForm.reset(); 
-        };
-
-        /**
-         * Menutup Modal
-         */
-        const closeModal = () => {
-            modalOverlay.classList.remove('show');
-        };
-
-        
-        // --- 3. Event Listeners (Menghidupkan Tombol) ---
-
-        // A. Header Listeners (Poin 3)
-        
-        // Meng-toggle (memunculkan/menyembunyikan) Search Bar
-        searchToggle.addEventListener('click', () => {
-            searchBarContainer.classList.toggle('show');
-        });
-
-        // Meng-toggle Sidebar (Lihat catatan CSS di bawah)
-        // Meng-toggle Sidebar (Lihat catatan CSS di bawah)
-        sidebarToggle.addEventListener('click', (event) => { // <-- 1. Tambahkan (event) di sini
-            event.stopPropagation(); // <-- 2. Sekarang ini akan berfungsi
-            sidebar.classList.toggle('show');
-            appContainer.classList.toggle('sidebar-open');
-        });
-
-        appContainer.addEventListener('click', () => {
-        // Cek dulu: Apakah sidebar-nya sedang terbuka?
-        if (sidebar.classList.contains('show')) {
-            // Jika iya, tutup sidebar-nya
-            sidebar.classList.remove('show');
-            // Dan hapus class 'sidebar-open' dari container
-            appContainer.classList.remove('sidebar-open');
-        }
-        });
-
-        // B. Modal Open Listeners (Poin 2)
-        
-        // Tombol Mobile
-        btnModalMasukMobile.addEventListener('click', () => {
-            openModal('masuk', 'Catat Barang Masuk');
-        });
-        btnModalKeluarMobile.addEventListener('click', () => {
-            openModal('keluar', 'Catat Barang Keluar');
-        });
-
-        // Tombol Desktop
-        btnShowModalMasuk.addEventListener('click', () => {
-            openModal('masuk', 'Catat Barang Masuk');
-        });
-        btnShowModalKeluar.addEventListener('click', () => {
-            openModal('keluar', 'Catat Barang Keluar');
-        });
-
-        // C. Modal Close Listeners
-        btnCloseModal.addEventListener('click', closeModal);
-        btnCancelModal.addEventListener('click', closeModal);
-
-        // Menutup modal saat mengklik area overlay (luar kotak)
-        modalOverlay.addEventListener('click', (event) => {
-            if (event.target === modalOverlay) {
-                closeModal();
-            }
-        });
-
-        // D. Form Submission Listener
-        transactionForm.addEventListener('submit', (event) => {
-            // Mencegah halaman me-reload saat form disubmit
-            event.preventDefault(); 
-            
-            // 1. Ambil data dari form
-            const type = transactionTypeInput.value;
-            const item = document.getElementById('searchItem').value;
-            const amount = document.getElementById('itemAmount').value;
-            const notes = document.getElementById('itemNotes').value;
-            
-            // 2. (Untuk Tes) Tampilkan data di console
-            console.log('--- FORM SUBMITTED ---');
-            console.log('Tipe:', type);
-            console.log('Barang:', item);
-            console.log('Jumlah:', amount);
-            console.log('Keterangan:', notes);
-            
-            // 3. (Nantinya) Di sinilah Anda akan mengirim data ke backend (API)
-            // fetch('/api/transaksi', { method: 'POST', body: ... });
-
-            // 4. Tutup modal setelah berhasil submit
-            closeModal();
-        });
-
-    });
-
-// ===============================================
-// === TAMBAHAN UNTUK MODAL PRODUK (DAFTAR BARANG) ===
-// ===============================================
-
-// Cek apakah kita berada di halaman Daftar Barang
-// (Hanya jalankan jika elemen-elemen ini ada)
-const btnShowProductModalMobile = document.getElementById('btnShowProductModalMobile');
-const btnShowProductModalDesktop = document.getElementById('btnShowProductModalDesktop');
-
-if (btnShowProductModalMobile) { // Cukup cek 1 tombol
+    // ===============================================
+    // === 1. SELEKSI ELEMEN (GLOBAL) ===
+    // ===============================================
+    // Variabel ini akan 'null' jika elemennya tidak ada di halaman
     
-    // 1. Seleksi Elemen Modal Produk
+    // --- Elemen Umum (Sidebar, dll) ---
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const searchToggle = document.getElementById('searchToggle');
+    const searchBarContainer = document.getElementById('searchBarContainer');
+    const appContainer = document.querySelector('.app-container');
+
+    // --- Elemen Modal Transaksi (Halaman Dashboard) ---
+    const modalOverlay = document.getElementById('inputModalOverlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const transactionTypeInput = document.getElementById('transactionType');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+    const btnCancelModal = document.getElementById('btnCancelModal');
+    const btnModalMasukMobile = document.getElementById('btnModalMasukMobile');
+    const btnModalKeluarMobile = document.getElementById('btnModalKeluarMobile');
+    const btnShowModalMasuk = document.getElementById('btnShowModalMasuk'); // Desktop
+    const btnShowModalKeluar = document.getElementById('btnShowModalKeluar'); // Desktop
+    const transactionForm = document.getElementById('transactionForm');
+
+    // --- Elemen Modal Produk (Halaman Daftar Barang) ---
+    const btnShowProductModalMobile = document.getElementById('btnShowProductModalMobile');
+    // (Tombol desktop-nya, jika ada)
+    // const btnShowProductModalDesktop = document.getElementById('btnShowProductModalDesktop'); 
     const productModalOverlay = document.getElementById('productModalOverlay');
     const productModalTitle = document.getElementById('productModalTitle');
     const btnCloseProductModal = document.getElementById('btnCloseProductModal');
     const btnCancelProductModal = document.getElementById('btnCancelProductModal');
     const productForm = document.getElementById('productForm');
 
-    // 2. Fungsi Buka/Tutup
+
+    // ===============================================
+    // === 2. FUNGSI LOGIKA (Bisa Dipakai Bersama) ===
+    // ===============================================
+    
+    // (Fungsi-fungsi ini aman karena hanya dipanggil oleh event listener)
+
+    const openModal = (type, title) => {
+        modalTitle.textContent = title;
+        transactionTypeInput.value = type;
+        modalOverlay.classList.add('show');
+        transactionForm.reset(); 
+    };
+
+    const closeModal = () => {
+        modalOverlay.classList.remove('show');
+    };
+    
     const openProductModal = (mode = 'add') => {
         if (mode === 'edit') {
             productModalTitle.textContent = 'Edit Barang';
-            // (Nanti di sini kita isi form dengan data barang)
         } else {
             productModalTitle.textContent = 'Tambah Barang Baru';
-            productForm.reset(); // Kosongkan form
+            productForm.reset();
         }
         productModalOverlay.classList.add('show');
     };
@@ -167,39 +67,110 @@ if (btnShowProductModalMobile) { // Cukup cek 1 tombol
         productModalOverlay.classList.remove('show');
     };
 
-    // 3. Event Listeners
-    btnShowProductModalMobile.addEventListener('click', () => openProductModal('add'));
-    btnShowProductModalDesktop.addEventListener('click', () => openProductModal('add'));
     
-    btnCloseProductModal.addEventListener('click', closeProductModal);
-    btnCancelProductModal.addEventListener('click', closeProductModal);
+    // ===============================================
+    // === 3. EVENT LISTENERS (BAGIAN AMAN) ===
+    // ===============================================
+    // Kita cek 'if (elemen)' SEBELUM memasang listener.
+    // Ini adalah kunci agar tidak error di halaman yang berbeda.
 
-    productModalOverlay.addEventListener('click', (event) => {
-        if (event.target === productModalOverlay) {
+    // --- A. Listener Navigasi Umum ---
+    
+    if (searchToggle) {
+        searchToggle.addEventListener('click', () => {
+            searchBarContainer.classList.toggle('show');
+        });
+    }
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', (event) => {
+            event.stopPropagation(); // Mencegah "klik di luar"
+            sidebar.classList.toggle('show');
+            appContainer.classList.toggle('sidebar-open');
+        });
+    }
+
+    if (appContainer) {
+        appContainer.addEventListener('click', () => {
+            if (sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+                appContainer.classList.remove('sidebar-open');
+            }
+        });
+    }
+
+    // --- B. Listener Modal Transaksi (Hanya jalan di Dashboard) ---
+    
+    if (btnModalMasukMobile) {
+        btnModalMasukMobile.addEventListener('click', () => {
+            openModal('masuk', 'Catat Barang Masuk');
+        });
+    }
+    if (btnModalKeluarMobile) {
+        btnModalKeluarMobile.addEventListener('click', () => {
+            openModal('keluar', 'Catat Barang Keluar');
+        });
+    }
+    if (btnShowModalMasuk) {
+        btnShowModalMasuk.addEventListener('click', () => {
+            openModal('masuk', 'Catat Barang Masuk');
+        });
+    }
+    if (btnShowModalKeluar) {
+        btnShowModalKeluar.addEventListener('click', () => {
+            openModal('keluar', 'Catat Barang Keluar');
+        });
+    }
+    if (btnCloseModal) {
+        btnCloseModal.addEventListener('click', closeModal);
+    }
+    if (btnCancelModal) {
+        btnCancelModal.addEventListener('click', closeModal);
+    }
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', (event) => {
+            if (event.target === modalOverlay) {
+                closeModal();
+            }
+        });
+    }
+    if (transactionForm) {
+        transactionForm.addEventListener('submit', (event) => {
+            event.preventDefault(); 
+            // ... (logika submit Anda)
+            console.log('Form Transaksi disubmit');
+            closeModal();
+        });
+    }
+
+    // --- C. Listener Modal Produk (Hanya jalan di Daftar Barang) ---
+
+    if (btnShowProductModalMobile) {
+        btnShowProductModalMobile.addEventListener('click', () => openProductModal('add'));
+    }
+    // if (btnShowProductModalDesktop) {
+    //     btnShowProductModalDesktop.addEventListener('click', () => openProductModal('add'));
+    // }
+    if (btnCloseProductModal) {
+        btnCloseProductModal.addEventListener('click', closeProductModal);
+    }
+    if (btnCancelProductModal) {
+        btnCancelProductModal.addEventListener('click', closeProductModal);
+    }
+    if (productModalOverlay) {
+        productModalOverlay.addEventListener('click', (event) => {
+            if (event.target === productModalOverlay) {
+                closeProductModal();
+            }
+        });
+    }
+    if (productForm) {
+        productForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            // ... (logika submit produk Anda)
+            console.log('Form Produk disubmit');
             closeProductModal();
-        }
-    });
+        });
+    }
 
-    // 4. Form Submit
-    productForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        
-        // Ambil data
-        const namaBarang = document.getElementById('productName').value;
-        const satuan = document.getElementById('productUnit').value;
-        const kategori = document.getElementById('productCategory').value;
-        const minStok = document.getElementById('productMinStock').value;
-        
-        console.log('--- FORM PRODUK BARU DISUBMIT ---');
-        console.log('Nama:', namaBarang);
-        console.log('Satuan:', satuan);
-        console.log('Kategori:', kategori);
-        console.log('Min. Stok:', minStok);
-
-        // (Kirim data ke backend...)
-
-        closeProductModal(); // Tutup modal
-    });
-    
-    // (Nanti di sini tambahkan listener untuk tombol "..." di tiap kartu)
-}
+}); // <-- AKHIR DARI DOMContentLoaded

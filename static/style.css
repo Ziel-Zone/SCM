@@ -425,3 +425,138 @@ ul { list-style: none; padding: 0; margin: 0; }
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+/* =========================================
+   10. Gaya Halaman Laporan
+   ========================================= */
+
+/* Filter Form */
+.filter-section {
+    background: var(--bg-container);
+    padding: 20px;
+    border-radius: var(--radius-medium);
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-soft);
+}
+.report-filter-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 kolom di mobile */
+    gap: 15px;
+    align-items: flex-end; /* Menjajarkan tombol "Tampilkan" */
+}
+.report-filter-form .form-group {
+    margin-bottom: 0;
+}
+.report-filter-form select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-small);
+    background: var(--bg-body);
+    font-size: 1rem;
+    -webkit-appearance: none;
+    appearance: none; /* Hapus gaya default dropdown */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-13%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2013l128%20128c3.6%203.6%207.8%205.4%2013%205.4s9.4-1.8%2013-5.4L287%2095.2c3.6-3.6%205.4-7.8%205.4-13%200-5-1.8-9.2-5.4-13z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 14px top 50%;
+    background-size: .65em auto;
+    padding-right: 30px; /* Ruang untuk ikon panah */
+}
+.report-filter-form button {
+    width: 100%;
+    padding: 12px;
+}
+
+/* Summary Cards */
+.summary-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 kolom di mobile */
+    gap: 15px;
+}
+.summary-card {
+    background: var(--bg-container);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-medium);
+    padding: 20px;
+}
+.summary-card span {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+.summary-card strong {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+.summary-card small {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Detail Table */
+.report-details {
+    margin-top: 30px;
+}
+.report-details h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+.table-responsive-container {
+    width: 100%;
+    overflow-x: auto; /* Kunci untuk tabel responsif */
+    background: var(--bg-container);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-medium);
+}
+table.report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+table.report-table th,
+table.report-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap; /* Mencegah teks wrap */
+}
+table.report-table thead th {
+    background: var(--bg-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+table.report-table tbody tr:last-child td {
+    border-bottom: none;
+}
+table.report-table td strong {
+    font-weight: 600;
+}
+.text-masuk {
+    color: #27ae60; /* Hijau */
+    font-weight: 500;
+}
+.text-keluar {
+    color: var(--accent-danger); /* Merah */
+    font-weight: 500;
+}
+
+/* =========================================
+   11. Update Responsif (Laporan)
+   ========================================= */
+@media (min-width: 768px) {
+    .report-filter-form {
+        grid-template-columns: 2fr 1fr 1fr; /* 3 kolom di desktop */
+    }
+    .report-filter-form button {
+        max-width: 150px; /* Tombol tidak perlu full-width */
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 kartu sejajar */
+    }
+}
