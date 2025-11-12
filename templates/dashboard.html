@@ -8,39 +8,49 @@
 
     <section class="greeting" style="margin-top: 20px;">
         <h2>Halo, {% if user %}{{user.nama_lengkap}}{% else %}Pengguna{% endif %}👋 </h2>
-    </section>
 
     <section class="restock-section">
         <h3>Perlu Segera Restock</h3>
         <div class="card-scroll-container">
-    </section>
-        {% for barang in daftar_restock %}
-        <div class="restock card">
-            <strong>{{ barang.nama_barang }}</strong>
-            <span>Sisa : {{ barang.satuan }}</span>
-        </div>
-        {% endfor %}
 
-        {% if not daftar_restock %}
-        <p>Tidak ada barang yang perlu direstock.</p>
-        {% endif %}
+            {% for barang in daftar_restock %}
+                <div class="restock card">
+                    <strong>{{ barang.nama_barang }}</strong>
+                    <span>Sisa : {{ barang.stok }}</span>
+                </div>
+            {% endfor %}
+
+            {% if not daftar_restock %}
+                <p style="padding : 0 10px; color: var(--text-secondary)">
+                    Tidak ada barang yang perlu direstock.
+                </p>
+            {% endif %}
+
+        </div>
+    </section>
         
     <section class="desktop-actions">
         <button class="btn btn-primary" id="btnShowModalMasuk">+ Catat Barang Masuk</button>
+        <button class="btn btn-tertiary" id="btnShowProductModalDesktop">+ Tambah Barang Baru</button>
         <button class="btn btn-secondary" id="btnShowModalKeluar">- Catat Barang Keluar</button>
     </section>
 
 {% endblock %}
 
 {% block mobile_actions %}
-<div class="mobile-action-bar">
-    <button class="btn btn-primary-mobile" id="btnModalMasukMobile">
-        + Barang Masuk
-    </button>
-    <button class="btn btn-secondary-mobile" id="btnModalKeluarMobile">
-        - Barang Keluar
-    </button>
-</div>
+    <div class="mobile-action-bar">
+        <button class="btn btn-primary-mobile" id="btnModalMasukMobile">
+            + Masuk
+        </button>
+        
+        <button class="btn btn-tertiary-mobile" id="btnShowProductModalMobile">
+            + Tambah Barang
+        </button>
+
+        <button class="btn btn-secondary-mobile" id="btnModalKeluarMobile">
+            - Keluar
+        </button>
+    </div>
 {% endblock %}
 
 {% block modals %}
@@ -74,6 +84,44 @@
             </div>
         </form>
         
+    </div>
+</div>
+<div id="productModalOverlay" class="modal-overlay"> <div class="modal-content">
+        
+        <div class="modal-header">
+            <h3 id="productModalTitle">Tambah Barang Baru</h3>
+            <button class="close-modal" id="btnCloseProductModal">&times;</button>
+        </div>
+        
+        <form id="productForm">
+            <div class="form-group">
+                <label for="productName">Nama Barang</label>
+                <input type="text" id="productName" required>
+            </div>
+            
+            <div class="form-group-split">
+                <div class="form-group">
+                    <label for="productUnit">Satuan</label>
+                    <input type="text" id="productUnit" placeholder="Cth: pcs, rim, box" required>
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Kategori</label>
+                    <input type="text" id="productCategory" placeholder="Cth: ATK, Konsumsi">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="productMinStock">Stok Minimum</label>
+                <input type="number" id="productMinStock" value="0" min="0">
+                <small>Sistem akan memberi notifikasi jika stok di bawah angka ini.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="btnCancelProductModal">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan Barang</button>
+            </div>
+        </form>
+
     </div>
 </div>
 {% endblock %}

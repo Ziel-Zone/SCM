@@ -87,10 +87,16 @@ class Transaction(db.Model):
 def dashboard():
     user_sekarang=User.query.get(1)  # Contoh: ambil user dengan ID 1
     barang_restock=Product.query.limit(5).all()  # Contoh: ambil 5 barang pertama
+    barang_restock = Product.query.filter(
+        Product.stok <= Product.stock_minimum
+    ).all()
+
+    semua_barang = Product.query.order_by(Product.nama_barang).all()
     return render_template(
         'dashboard.html',
         user=user_sekarang,
-        barang_restock=barang_restock
+        daftar_restock=barang_restock,
+        list_semua_barang=semua_barang
     )
 
 
