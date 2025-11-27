@@ -34,8 +34,27 @@
             </header>
 
             <div class="search-bar-container" id="searchBarContainer">
-                <input type="search" placeholder="Cari barang...">
+                <div style="position: relative;">
+                    <input type="text" id="globalSearchInput" placeholder="Cari barang..." autocomplete="off">
+                    
+                    <div id="globalSearchResults" class="search-results-list"></div>
+                </div>
             </div>
+
+            {% if list_semua_barang %}
+            <script>
+                const GLOBAL_DATA_BARANG = [
+                    {% for barang in list_semua_barang %}
+                        {
+                            id: "{{ barang.id }}",
+                            nama: "{{ barang.nama_barang }}",
+                            stok: "{{ barang.stok }}",
+                            satuan: "{{ barang.satuan }}"
+                        },
+                    {% endfor %}
+                ];
+            </script>
+            {% endif %}
 
             {% block content %}
             {% endblock %}

@@ -579,3 +579,70 @@ table.report-table td strong {
     }
 }
 
+/* =========================================
+   9. Style Tambahan untuk Live Search
+   ========================================= */
+
+.search-results-list {
+    position: absolute;
+    top: 100%; /* Muncul tepat di bawah input */
+    left: 0;
+    width: 100%;
+    background: var(--bg-container);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 12px 12px; /* Radius bawah saja */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100; /* Pastikan di atas elemen lain */
+    display: none; /* Sembunyi default */
+}
+
+.search-result-item {
+    padding: 12px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background-color: var(--bg-body);
+}
+
+.search-result-item strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+.search-result-item small {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* Tombol Edit & Hapus di Kartu */
+.card-actions {
+    display: flex;
+    gap: 5px;
+}
+.action-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+.action-btn:hover {
+    opacity: 1;
+}
+.delete-btn:hover {
+    filter: grayscale(100%) brightness(80%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8); /* Merah */
+}

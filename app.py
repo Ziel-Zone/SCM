@@ -3,13 +3,25 @@ import enum
 from sqlalchemy.sql import func
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask import request, redirect, url_for, flash
+from flask import request, redirect, url_for, flash, jsonify
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.db')
 db = SQLAlchemy(app)
+
+# app.py
+
+# Ini akan membuat 'list_semua_barang' tersedia di SEMUA template (layout, dashboard, dll)
+@app.context_processor
+def inject_products():
+    try:
+        # Ambil semua produk
+        products = Product.query.order_by(Product.nama_barang).all()
+        return dict(list_semua_barang=products)
+    except:
+        return dict(list_semua_barang=[])
 
 class RoleEnum(enum.Enum):
     admin  = 'admin'
@@ -90,6 +102,7 @@ def dashboard():
     barang_restock = Product.query.filter(
         Product.stok <= Product.stock_minimum
     ).all()
+    
 
     semua_barang = Product.query.order_by(Product.nama_barang).all()
     return render_template(
@@ -98,6 +111,73 @@ def dashboard():
         daftar_restock=barang_restock,
         list_semua_barang=semua_barang
     )
+
+@app.route('/transaksi/baru', methods=['POST'])
+def tambah_transaksi():
+    # ambil data dari form
+    data = request.json
+
+    try:
+        product_id = int(data.get('product_id'))
+        jumlah = int(data.get('jumlah'))
+        tipe = data.get('tipe')
+        keterangan = data.get('keterangan')
+        user_id = 1  # Ganti dengan user yang sedang login
+        
+        barang = Product.query.get(product_id)
+
+        if not barang:
+            return jsonify({'status': 'error', 'message': 'Barang tidak ditemukan'}), 404
+
+        if tipe == 'masuk':
+            barang.stok += jumlah
+        elif tipe == 'keluar':
+            if barang.stok < jumlah:
+                return jsonify({'error': f'Stok {barang.nama_barang}tidak mencukupi'}), 400
+            barang.stok = barang.stok - jumlah
+        
+        transaksi_baru = Transaction(
+            product_id=product_id,
+            user_id=user_id,
+            tipe=tipe,
+            jumlah=jumlah,
+            keterangan=keterangan
+        )
+        db.session.add(transaksi_baru)
+        db.session.commit()
+
+        return jsonify({
+            'message' : 'Transaksi berhasil ditambahkan',
+            'stok_sekarang': barang.stok
+        }), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/produk/baru', methods=['POST'])
+def tambah_product():
+    data = request.json
+    try:
+        produk_baru = Product(
+            nama_barang = data.get('nama_barang'),
+            satuan = data.get('satuan'),
+            kategori = data.get('kategori'),
+            stock_minimum = int(data.get('stock_minimum')) if data.get('stock_minimum') not in (None, '') else 0,
+            stok = int(data.get('stok')) if data.get('stok') not in (None, '') else 0,
+            created_by = 1  # Ganti dengan user yang sedang login
+        )
+        db.session.add(produk_baru)
+        db.session.commit()
+
+        return jsonify({
+            'message': f'Produk "{produk_baru.nama_barang}" berhasil ditambahkan!'
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 
 
 @app.route('/daftar-barang')
@@ -109,4 +189,40 @@ def daftar_barang():
 def laporan():
     # (Logika ambil laporan Anda)
     return render_template('laporan.html')
+
+# 1. RUTE UPDATE BARANG
+@app.route('/produk/edit/<int:id>', methods=['PUT'])
+def edit_produk(id):
+    data = request.json
+    try:
+        barang = Product.query.get(id)
+        if not barang:
+            return jsonify({'error': 'Barang tidak ditemukan'}), 404
+            
+        # Update data
+        barang.nama_barang = data.get('nama_barang')
+        barang.satuan = data.get('satuan')
+        barang.kategori = data.get('kategori')
+        barang.stock_minimum = int(data.get('stock_minimum'))
+        
+        db.session.commit()
+        return jsonify({'message': 'Data barang berhasil diupdate!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+# 2. RUTE HAPUS BARANG
+@app.route('/produk/hapus/<int:id>', methods=['DELETE'])
+def hapus_produk(id):
+    try:
+        barang = Product.query.get(id)
+        if not barang:
+            return jsonify({'error': 'Barang tidak ditemukan'}), 404
+            
+        db.session.delete(barang)
+        db.session.commit()
+        return jsonify({'message': 'Barang berhasil dihapus!'}), 200
+    except Exception as e:
+        # Error biasanya terjadi jika barang sudah pernah dipakai di transaksi (Foreign Key)
+        return jsonify({'error': 'Gagal menghapus: Barang mungkin sudah memiliki riwayat transaksi.'}), 500
 

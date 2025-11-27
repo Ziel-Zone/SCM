@@ -1,30 +1,102 @@
 {% extends "layout.html" %}
 
 {% block title %}Daftar Barang - Sistem Pa Wawan{% endblock %}
-
 {% block page_title %}Daftar Barang{% endblock %}
 
 {% block content %}
 
     <div class="page-header">
         <h2>Semua Barang</h2>
-        <button class="btn btn-primary" id="btnShowProductModalDesktop">+ Tambah Barang Baru</button>
+        <button class="btn-circle" id="btnShowProductModalDesktop">+</button>
     </div>
 
     <div class="item-list-container">
+        
+        {% for barang in list_semua_barang %}
+        <div class="item-card">
+            <div class="item-card-header">
+                <h3>{{ barang.nama_barang }}</h3>
+                <div class="card-actions">
+                    <button class="action-btn edit-btn" 
+                        data-id="{{ barang.id }}"
+                        data-nama="{{ barang.nama_barang }}"
+                        data-satuan="{{ barang.satuan }}"
+                        data-kategori="{{ barang.kategori }}"
+                        data-min="{{ barang.stock_minimum }}">
+                        ✏️
+                    </button>
+                    <button class="action-btn delete-btn" data-id="{{ barang.id }}" data-nama="{{ barang.nama_barang }}">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+            
+            <div class="item-card-body">
+                <div class="item-stock-info">
+                    <strong>{{ barang.stok }}</strong>
+                    <span>{{ barang.satuan }}</span>
+                </div>
+                <div class="item-meta-info">
+                    <span>Kategori: {{ barang.kategori }}</span>
+                    <span>Min. Stok: {{ barang.stock_minimum }}</span>
+                </div>
+            </div>
         </div>
+        {% endfor %}
+
+        {% if not list_semua_barang %}
+            <p style="grid-column: 1/-1; text-align: center; color: #888;">Belum ada barang terdaftar.</p>
+        {% endif %}
+
+    </div>
 
 {% endblock %}
 
 {% block mobile_actions %}
     <div class="mobile-action-bar single-button">
-        <button class="btn btn-primary-mobile" id="btnShowProductModalMobile">
-            + Tambah Barang Baru
+        <button class="btn-circle" id="btnShowProductModalMobile">
+            +
         </button>
     </div>
 {% endblock %}
 
 {% block modals %}
     <div id="productModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="productModalTitle">Tambah Barang Baru</h3>
+                <button class="close-modal" id="btnCloseProductModal">&times;</button>
+            </div>
+            
+            <form id="productForm">
+                <input type="hidden" id="productId">
+
+                <div class="form-group">
+                    <label for="productName">Nama Barang</label>
+                    <input type="text" id="productName" required>
+                </div>
+                
+                <div class="form-group-split">
+                    <div class="form-group">
+                        <label for="productUnit">Satuan</label>
+                        <input type="text" id="productUnit" placeholder="Cth: pcs, box" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Kategori</label>
+                        <input type="text" id="productCategory" placeholder="Cth: ATK">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="productMinStock">Stok Minimum</label>
+                    <input type="number" id="productMinStock" value="0" min="0">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="btnCancelProductModal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Barang</button>
+                </div>
+            </form>
         </div>
+    </div>
 {% endblock %}
