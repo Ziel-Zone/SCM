@@ -646,3 +646,40 @@ table.report-table td strong {
 .delete-btn:hover {
     filter: grayscale(100%) brightness(80%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8); /* Merah */
 }
+
+/* =========================================
+   10. PRINT / PDF STYLING
+   ========================================= */
+@media print {
+    /* Sembunyikan elemen navigasi & tombol */
+    .sidebar, 
+    .app-header, 
+    .mobile-action-bar,
+    .page-header button, /* Tombol Ekspor */
+    .filter-section,     /* Form Filter */
+    .app-footer {
+        display: none !important;
+    }
+
+    /* Reset margin konten utama */
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Rapikan tabel */
+    table {
+        width: 100% !important;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd !important;
+    }
+
+    /* Pastikan warna background tercetak (untuk header tabel dll) */
+    body {
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact;
+    }
+}
