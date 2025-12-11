@@ -1,4 +1,14 @@
-# Created by venv; see https://docs.python.org/3/library/venv.html
-*.json
+# Abaikan file kunci rahasia
+credentials.json
+
+# Abaikan database lokal (karena isinya data dummy/testing)
+instance/
+*.db
+*.sqlite3
+
+# Abaikan file sampah Python
 __pycache__/
+*.pyc
+
+# Abaikan folder virtual environment (opsional, tapi bagus)
 venv/
