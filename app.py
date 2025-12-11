@@ -1,9 +1,11 @@
 import os
 import enum
 from sqlalchemy.sql import func
+from sqlalchemy import extract
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, redirect, url_for, flash, jsonify
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -185,10 +187,77 @@ def daftar_barang():
     # (Logika ambil barang Anda)
     return render_template('daftar-barang.html')
 
+# app.py
+
 @app.route('/laporan')
 def laporan():
-    # (Logika ambil laporan Anda)
-    return render_template('laporan.html')
+    # 1. Ambil filter dari URL (Query String)
+    # Default ke bulan/tahun sekarang jika tidak ada
+    import datetime
+    sekarang = datetime.datetime.now()
+    
+    bulan_filter = request.args.get('bulan', type=int, default=sekarang.month)
+    tahun_filter = request.args.get('tahun', type=int, default=sekarang.year)
+
+    # 2. Ambil semua Transaksi pada bulan/tahun tersebut
+    transaksi_list = Transaction.query.filter(
+        extract('month', Transaction.tanggal_transaksi) == bulan_filter,
+        extract('year', Transaction.tanggal_transaksi) == tahun_filter
+    ).all()
+
+    # 3. Hitung Rekapitulasi per Barang (Algoritma Python Manual)
+    # Kita butuh dict: { id_barang: { 'nama': ..., 'masuk': 0, 'keluar': 0 } }
+    rekap = {}
+    
+    # Inisialisasi rekap dengan semua produk (biar yg ga ada transaksi tetap muncul)
+    semua_produk = Product.query.all()
+    for p in semua_produk:
+        rekap[p.id] = {
+            'nama': p.nama_barang,
+            'stok_akhir': p.stok, # Stok real-time saat ini
+            'masuk': 0,
+            'keluar': 0
+        }
+
+    # Loop transaksi untuk hitung masuk/keluar
+    total_masuk_semua = 0
+    total_keluar_semua = 0
+    
+    for t in transaksi_list:
+        if t.product_id in rekap:
+            if t.tipe == 'masuk':
+                rekap[t.product_id]['masuk'] += t.jumlah
+                total_masuk_semua += t.jumlah
+            elif t.tipe == 'keluar':
+                rekap[t.product_id]['keluar'] += t.jumlah
+                total_keluar_semua += t.jumlah
+
+    # Hitung "Stok Awal" (Reverse Engineering)
+    # Stok Awal = Stok Akhir - Masuk + Keluar
+    for pid, data in rekap.items():
+        data['stok_awal'] = data['stok_akhir'] - data['masuk'] + data['keluar']
+
+    # Konversi ke list untuk dikirim ke template
+    laporan_data = list(rekap.values())
+
+    # Cari Item Terbanyak Keluar
+    item_terbanyak_keluar = "-"
+    max_keluar = 0
+    for data in laporan_data:
+        if data['keluar'] > max_keluar:
+            max_keluar = data['keluar']
+            item_terbanyak_keluar = data['nama']
+
+    # 4. Kirim ke Template
+    return render_template(
+        'laporan.html',
+        laporan=laporan_data,
+        bulan=bulan_filter,
+        tahun=tahun_filter,
+        total_masuk=total_masuk_semua,
+        total_keluar=total_keluar_semua,
+        top_item=item_terbanyak_keluar
+    )
 
 # 1. RUTE UPDATE BARANG
 @app.route('/produk/edit/<int:id>', methods=['PUT'])
