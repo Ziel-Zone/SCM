@@ -5,12 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // === 1. SELEKSI ELEMEN (GLOBAL) ===
     // ===============================================
 
-    // --- Elemen Umum (Sidebar, Navigasi) ---
-    const sidebar = document.getElementById('sidebar');
-    const sidebarToggle = document.getElementById('sidebarToggle');
+    // --- Elemen Umum (Navbar Baru) ---
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.getElementById('navLinks');
     const searchToggle = document.getElementById('searchToggle');
     const searchBarContainer = document.getElementById('searchBarContainer');
-    const appContainer = document.querySelector('.app-container');
 
     // --- Elemen Modal Transaksi (Dashboard) ---
     const modalOverlay = document.getElementById('inputModalOverlay');
@@ -18,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const transactionTypeInput = document.getElementById('transactionType');
     const btnCloseModal = document.getElementById('btnCloseModal');
     const btnCancelModal = document.getElementById('btnCancelModal');
+
+    // Tombol pemicu Modal Transaksi
     const btnModalMasukMobile = document.getElementById('btnModalMasukMobile');
     const btnModalKeluarMobile = document.getElementById('btnModalKeluarMobile');
     const btnShowModalMasuk = document.getElementById('btnShowModalMasuk');
@@ -38,9 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCloseProductModal = document.getElementById('btnCloseProductModal');
     const btnCancelProductModal = document.getElementById('btnCancelProductModal');
     const productForm = document.getElementById('productForm');
-    
+
     // Input Form Produk
-    const productIdInput = document.getElementById('productId');
+    const productIdInput = document.getElementById('productId'); // Ini yang sering bikin error
     const productNameInput = document.getElementById('productName');
     const productUnitInput = document.getElementById('productUnit');
     const productCategoryInput = document.getElementById('productCategory');
@@ -52,35 +53,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ===============================================
-    // === 2. FUNGSI LOGIKA ===
+    // === 2. FUNGSI LOGIKA (DILINDUNGI NULL CHECKER) ===
     // ===============================================
 
-    // --- Logika Modal Transaksi ---
     const openModal = (type, title) => {
         if (modalTitle) modalTitle.textContent = title;
         if (transactionTypeInput) transactionTypeInput.value = type;
-        if (modalOverlay) modalOverlay.classList.add('show');
         if (transactionForm) transactionForm.reset();
-        // Reset tampilan search
         if (unitLabel) unitLabel.textContent = '-';
         if (resultsList) resultsList.style.display = 'none';
+        if (modalOverlay) modalOverlay.classList.add('show');
     };
 
     const closeModal = () => {
         if (modalOverlay) modalOverlay.classList.remove('show');
     };
 
-    // --- Logika Modal Produk ---
     const openProductModal = (mode, data = null) => {
         if (mode === 'edit' && data) {
-            productModalTitle.textContent = 'Edit Barang';
-            productIdInput.value = data.id;
-            productNameInput.value = data.nama;
-            productUnitInput.value = data.satuan;
-            productCategoryInput.value = data.kategori;
-            productMinStockInput.value = data.min;
+            if (productModalTitle) productModalTitle.textContent = 'Edit Barang';
+            if (productIdInput) productIdInput.value = data.id;
+            if (productNameInput) productNameInput.value = data.nama;
+            if (productUnitInput) productUnitInput.value = data.satuan;
+            if (productCategoryInput) productCategoryInput.value = data.kategori;
+            if (productMinStockInput) productMinStockInput.value = data.min;
         } else {
-            productModalTitle.textContent = 'Tambah Barang Baru';
+            if (productModalTitle) productModalTitle.textContent = 'Tambah Barang Baru';
             if (productForm) productForm.reset();
             if (productIdInput) productIdInput.value = '';
         }
@@ -96,51 +94,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // === 3. EVENT LISTENERS ===
     // ===============================================
 
-    // --- A. Navigasi & Sidebar ---
-    if (searchToggle) {
+    // --- A. Navigasi Atas (Navbar) ---
+    if (searchToggle && searchBarContainer) {
         searchToggle.addEventListener('click', () => {
             searchBarContainer.classList.toggle('show');
+            if (searchBarContainer.classList.contains('show')) globalSearchInput.focus();
         });
     }
 
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', (event) => {
-            event.stopPropagation();
-            sidebar.classList.toggle('show');
-            appContainer.classList.toggle('sidebar-open');
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
         });
     }
 
-    if (appContainer) {
-        appContainer.addEventListener('click', () => {
-            if (sidebar && sidebar.classList.contains('show')) {
-                sidebar.classList.remove('show');
-                appContainer.classList.remove('sidebar-open');
-            }
-        });
-    }
-
-    // --- B. Modal Transaksi (Dashboard) ---
+    // --- B. Pemicu Modal Transaksi ---
     if (btnModalMasukMobile) btnModalMasukMobile.addEventListener('click', () => openModal('masuk', 'Catat Barang Masuk'));
     if (btnModalKeluarMobile) btnModalKeluarMobile.addEventListener('click', () => openModal('keluar', 'Catat Barang Keluar'));
     if (btnShowModalMasuk) btnShowModalMasuk.addEventListener('click', () => openModal('masuk', 'Catat Barang Masuk'));
     if (btnShowModalKeluar) btnShowModalKeluar.addEventListener('click', () => openModal('keluar', 'Catat Barang Keluar'));
-    
+
     if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
     if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
-    
-    if (modalOverlay) {
-        modalOverlay.addEventListener('click', (event) => {
-            if (event.target === modalOverlay) closeModal();
-        });
-    }
 
     // --- C. Live Search di Modal Transaksi ---
-    if (searchInput) {
+    if (searchInput && resultsList && hiddenIdInput) {
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
             resultsList.innerHTML = '';
-            
+
             if (keyword.length < 1) {
                 resultsList.style.display = 'none';
                 return;
@@ -161,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         div.addEventListener('click', () => {
                             searchInput.value = item.nama;
                             hiddenIdInput.value = item.id;
-                            unitLabel.textContent = item.satuan;
+                            if (unitLabel) unitLabel.textContent = item.satuan;
                             resultsList.style.display = 'none';
                         });
                         resultsList.appendChild(div);
@@ -173,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Sembunyikan hasil pencarian jika klik di luar
         document.addEventListener('click', (e) => {
             if (!searchInput.contains(e.target) && !resultsList.contains(e.target)) {
                 resultsList.style.display = 'none';
@@ -183,19 +166,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- D. Submit Form Transaksi ---
     if (transactionForm) {
         transactionForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); 
-            
-            const formData = {
-                product_id: hiddenIdInput.value, // Pakai hidden input dari search
-                jumlah: document.getElementById('itemAmount').value,
-                keterangan: document.getElementById('itemNotes').value,
-                tipe: transactionTypeInput.value 
-            };
+            event.preventDefault();
 
-            if (!formData.product_id) {
-                alert("Silakan pilih barang dari daftar pencarian!");
+            // Cek apakah user sudah pilih barang dari list
+            if (!hiddenIdInput.value) {
+                alert("Silakan pilih barang dari daftar pencarian terlebih dahulu!");
                 return;
             }
+
+            // Ganti text tombol saat loading
+            const btnSubmit = transactionForm.querySelector('button[type="submit"]');
+            const originalText = btnSubmit.innerText;
+            btnSubmit.innerText = "Menyimpan...";
+            btnSubmit.disabled = true;
+
+            const formData = {
+                product_id: hiddenIdInput.value,
+                jumlah: document.getElementById('itemAmount').value,
+                keterangan: document.getElementById('itemNotes').value,
+                tipe: transactionTypeInput.value
+            };
 
             try {
                 const response = await fetch('/transaksi/baru', {
@@ -214,45 +204,42 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('Error:', error);
                 alert('Gagal terhubung ke server.');
+            } finally {
+                // Kembalikan tombol ke semula jika gagal refresh
+                btnSubmit.innerText = originalText;
+                btnSubmit.disabled = false;
             }
         });
     }
 
-    // --- E. Modal Produk (Daftar Barang) ---
+    // --- E. Pemicu Modal Produk ---
     if (btnShowProductModalMobile) btnShowProductModalMobile.addEventListener('click', () => openProductModal('add'));
     if (btnShowProductModalDesktop) btnShowProductModalDesktop.addEventListener('click', () => openProductModal('add'));
-    
     if (btnCloseProductModal) btnCloseProductModal.addEventListener('click', closeProductModal);
     if (btnCancelProductModal) btnCancelProductModal.addEventListener('click', closeProductModal);
-    
-    if (productModalOverlay) {
-        productModalOverlay.addEventListener('click', (event) => {
-            if (event.target === productModalOverlay) closeProductModal();
-        });
-    }
 
-    // --- F. Tombol Edit & Hapus (Delegasi Event) ---
+    // --- F. Tombol Edit & Hapus (Daftar Barang) ---
     const itemListContainer = document.querySelector('.item-list-container');
     if (itemListContainer) {
         itemListContainer.addEventListener('click', async (e) => {
-            // Edit
-            if (e.target.closest('.edit-btn')) {
-                const btn = e.target.closest('.edit-btn');
+            const editBtn = e.target.closest('.edit-btn');
+            const deleteBtn = e.target.closest('.delete-btn');
+
+            if (editBtn) {
                 const data = {
-                    id: btn.dataset.id,
-                    nama: btn.dataset.nama,
-                    satuan: btn.dataset.satuan,
-                    kategori: btn.dataset.kategori,
-                    min: btn.dataset.min
+                    id: editBtn.dataset.id,
+                    nama: editBtn.dataset.nama,
+                    satuan: editBtn.dataset.satuan,
+                    kategori: editBtn.dataset.kategori,
+                    min: editBtn.dataset.min
                 };
                 openProductModal('edit', data);
             }
-            // Hapus
-            if (e.target.closest('.delete-btn')) {
-                const btn = e.target.closest('.delete-btn');
-                const id = btn.dataset.id;
-                const nama = btn.dataset.nama;
-                
+
+            if (deleteBtn) {
+                const id = deleteBtn.dataset.id;
+                const nama = deleteBtn.dataset.nama;
+
                 if (confirm(`Yakin ingin menghapus "${nama}"?`)) {
                     try {
                         const response = await fetch(`/produk/hapus/${id}`, { method: 'DELETE' });
@@ -276,7 +263,15 @@ document.addEventListener('DOMContentLoaded', () => {
         productForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            const id = productIdInput.value;
+            // AMAN: Jika productIdInput tidak ada, id akan dikosongkan tanpa error
+            const id = productIdInput ? productIdInput.value : '';
+
+            // Ganti text tombol saat loading
+            const btnSubmit = productForm.querySelector('button[type="submit"]');
+            const originalText = btnSubmit.innerText;
+            btnSubmit.innerText = "Menyimpan...";
+            btnSubmit.disabled = true;
+
             const formData = {
                 nama_barang: productNameInput.value,
                 satuan: productUnitInput.value,
@@ -304,19 +299,25 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('Error:', error);
                 alert('Gagal terhubung ke server.');
+            } finally {
+                // Kembalikan tombol ke semula jika gagal refresh
+                btnSubmit.innerText = originalText;
+                btnSubmit.disabled = false;
             }
         });
     }
 
     // --- H. Global Search (Navbar) ---
-    if (globalSearchInput) {
+    if (globalSearchInput && globalResultsList) {
         globalSearchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
             globalResultsList.innerHTML = '';
+
             if (keyword.length < 1) {
                 globalResultsList.style.display = 'none';
                 return;
             }
+
             if (typeof GLOBAL_DATA_BARANG !== 'undefined') {
                 const filtered = GLOBAL_DATA_BARANG.filter(item => item.nama.toLowerCase().includes(keyword));
                 if (filtered.length > 0) {
@@ -324,10 +325,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     filtered.forEach(item => {
                         const div = document.createElement('div');
                         div.classList.add('search-result-item');
-                        div.innerHTML = `<div><strong>${item.nama}</strong><small>Stok: ${item.stok}</small></div>`;
+                        div.innerHTML = `<div><strong>${item.nama}</strong><small>Stok: ${item.stok} ${item.satuan}</small></div>`;
                         div.addEventListener('click', () => {
-                            alert(`Detail: ${item.nama}\n(Stok: ${item.stok})`);
+                            alert(`Detail:\nNama: ${item.nama}\nStok: ${item.stok} ${item.satuan}`);
                             globalResultsList.style.display = 'none';
+                            globalSearchInput.value = '';
                         });
                         globalResultsList.appendChild(div);
                     });
@@ -337,6 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+
         document.addEventListener('click', (e) => {
             if (!globalSearchInput.contains(e.target) && !globalResultsList.contains(e.target)) {
                 globalResultsList.style.display = 'none';

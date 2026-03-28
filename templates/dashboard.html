@@ -1,56 +1,48 @@
 {% extends "layout.html" %}
 
-{% block title %}Dashboard - Sistem Pa Wawan{% endblock %}
-
-{% block page_title %}Dashboard{% endblock %}
+{% block page_title %}{% endblock %}
 
 {% block content %}
+<div class="dashboard-center-wrapper">
 
-    <section class="greeting" style="margin-top: 20px;">
-        <h2>Halo, {% if user %}{{user.nama_lengkap}}{% else %}Pengguna{% endif %}👋 </h2>
+    <h2 style="font-size: 2.2rem; margin-bottom: 5px;">Halo, {% if user %}{{user.nama_lengkap}}{% else %}Pa Wawan{%
+        endif %} 👋</h2>
+    <p style="color: var(--text-secondary); margin-bottom: 30px; font-size: 1.1rem;">Sistem Manajemen Inventaris</p>
 
-    <section class="restock-section">
-        <h3>Perlu Segera Restock</h3>
-        <div class="card-scroll-container">
-
-            {% for barang in daftar_restock %}
-                <div class="restock card">
-                    <strong>{{ barang.nama_barang }}</strong>
-                    <span>Sisa : {{ barang.stok }}</span>
-                </div>
-            {% endfor %}
-
-            {% if not daftar_restock %}
-                <p style="padding : 0 10px; color: var(--text-secondary)">
-                    Tidak ada barang yang perlu direstock.
-                </p>
-            {% endif %}
-
-        </div>
-    </section>
-        
-    <section class="desktop-actions">
+    <section class="desktop-actions centered-actions">
         <button class="btn btn-primary" id="btnShowModalMasuk">+ Catat Barang Masuk</button>
-        <button class="btn btn-tertiary" id="btnShowProductModalDesktop">+ Tambah Barang Baru</button>
+        <button class="btn btn-tertiary" id="btnShowProductModalDesktop"
+            onclick="document.getElementById('productModalOverlay').classList.add('show')">+ Tambah Barang Baru</button>
         <button class="btn btn-secondary" id="btnShowModalKeluar">- Catat Barang Keluar</button>
     </section>
 
+    <section class="restock-section" style="width: 100%; margin-top: 40px;">
+        <h3 style="margin-bottom: 20px; color: var(--accent-danger);">⚠️ Perlu Segera Restock</h3>
+
+        <div class="restock-compact-grid">
+            {% for barang in daftar_restock %}
+            <div class="restock-badge">
+                <span class="badge-name">{{ barang.nama_barang }}</span>
+                <span class="badge-stock">Sisa: {{ barang.stok }}</span>
+            </div>
+            {% endfor %}
+
+            {% if not daftar_restock %}
+            <p style="color: var(--text-secondary); font-style: italic;">Semua stok aman terkendali.</p>
+            {% endif %}
+        </div>
+    </section>
+
+</div>
 {% endblock %}
 
 {% block mobile_actions %}
-    <div class="mobile-action-bar">
-        <button class="btn btn-primary-mobile" id="btnModalMasukMobile">
-            + Masuk
-        </button>
-        
-        <button class="btn btn-tertiary-mobile" id="btnShowProductModalMobile">
-            + Tambah Barang
-        </button>
-
-        <button class="btn btn-secondary-mobile" id="btnModalKeluarMobile">
-            - Keluar
-        </button>
-    </div>
+<div class="mobile-action-bar">
+    <button class="btn btn-primary-mobile" id="btnModalMasukMobile">+ Masuk</button>
+    <button class="btn btn-tertiary-mobile" id="btnShowProductModalMobile"
+        onclick="document.getElementById('productModalOverlay').classList.add('show')">+ Tambah Barang</button>
+    <button class="btn btn-secondary-mobile" id="btnModalKeluarMobile">- Keluar</button>
+</div>
 {% endblock %}
 
 {% block modals %}
@@ -60,17 +52,14 @@
             <h3 id="modalTitle">Catat Barang</h3>
             <button class="close-modal" id="btnCloseModal">&times;</button>
         </div>
-        
+
         <form id="transactionForm">
             <input type="hidden" id="transactionType" value="keluar">
-            
+
             <div class="form-group" style="position: relative;">
                 <label for="searchItemInput">Barang Apa?</label>
-                
                 <input type="text" id="searchItemInput" placeholder="Ketik nama barang..." autocomplete="off" required>
-                
                 <input type="hidden" id="itemSelect" required>
-
                 <div id="searchResults" class="search-results-list"></div>
             </div>
             <div class="form-group">
@@ -89,14 +78,14 @@
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
-        
     </div>
 </div>
 <div id="productModalOverlay" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
             <h3 id="productModalTitle">Tambah Barang Baru</h3>
-            <button class="close-modal" id="btnCloseProductModal">&times;</button>
+            <button class="close-modal" id="btnCloseProductModal"
+                onclick="document.getElementById('productModalOverlay').classList.remove('show')">&times;</button>
         </div>
         <form id="productForm">
             <div class="form-group">
@@ -119,7 +108,8 @@
                 <small>Notifikasi jika stok di bawah ini.</small>
             </div>
             <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" id="btnCancelProductModal">Batal</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelProductModal"
+                    onclick="document.getElementById('productModalOverlay').classList.remove('show')">Batal</button>
                 <button type="submit" class="btn btn-primary">Simpan Barang</button>
             </div>
         </form>
@@ -129,13 +119,65 @@
 <script>
     const DATA_BARANG = [
         {% for barang in list_semua_barang %}
-            {
-                id: "{{ barang.id }}",
-                nama: "{{ barang.nama_barang }}",
+    {
+        id: "{{ barang.id }}",
+            nama: "{{ barang.nama_barang }}",
                 stok: "{{ barang.stok }}",
-                satuan: "{{ barang.satuan }}"
-            },
-        {% endfor %}
+                    satuan: "{{ barang.satuan }}"
+    },
+    {% endfor %}
     ];
 </script>
-{% endblock %}
+<script>
+    // SCRIPT KHUSUS UNTUK MENYIMPAN BARANG BARU DARI DASHBOARD
+    const productForm = document.getElementById('productForm');
+
+    if (productForm) {
+        productForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // Mencegah form melakukan loading halaman (refresh bawaan)
+
+            // 1. Ambil data dari inputan form
+            const dataBarangBaru = {
+                nama_barang: document.getElementById('productName').value,
+                satuan: document.getElementById('productUnit').value,
+                kategori: document.getElementById('productCategory').value,
+                stock_minimum: document.getElementById('productMinStock').value
+            };
+
+            // Ubah teks tombol jadi "Menyimpan..." biar user tahu sistem sedang kerja
+            const btnSubmit = productForm.querySelector('button[type="submit"]');
+            const originalText = btnSubmit.innerText;
+            btnSubmit.innerText = "Menyimpan...";
+            btnSubmit.disabled = true;
+
+            // 2. Kirim data ke backend Python (rute /produk/baru)
+            fetch("{{ url_for('tambah_produk') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataBarangBaru)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('❌ Gagal: ' + data.error);
+                        btnSubmit.innerText = originalText;
+                        btnSubmit.disabled = false;
+                    } else {
+                        alert('✅ Sukses: ' + data.message);
+                        // Tutup modal dan refresh halaman untuk melihat badge/kapsul baru
+                        document.getElementById('productModalOverlay').classList.remove('show');
+                        window.location.reload();
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('⚠️ Terjadi kesalahan pada sistem jaringan.');
+                    btnSubmit.innerText = originalText;
+                    btnSubmit.disabled = false;
+                });
+        });
+    }
+</script>
+{% endblock %} ```

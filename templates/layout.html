@@ -1,71 +1,93 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sistem Pa Wawan{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=1.1">
 </head>
+
 <body>
-    <aside class="sidebar" id="sidebar">
-        <div class_logo" ...>Sistem Pa Wawan</div>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('daftar_barang') }}">Daftar Barang</a></li>
-                <li><a href="{{ url_for('laporan') }}">Laporan</a></li>
-            </ul>
-        </nav>
-    </aside>
 
-    <div class="app-container">
-        <main class="main-content">
-            
-            <header class="app-header">
-                <button ... id="sidebarToggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </button>
-                
-                <h1 class="app-title">{% block page_title %}Dashboard{% endblock %}</h1>
+    <header class="top-navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="nav-logo">📦 Sistem Pa Wawan</div>
 
-                <button ... id="searchToggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                </button>
-            </header>
-
-            <div class="search-bar-container" id="searchBarContainer">
-                <div style="position: relative;">
-                    <input type="text" id="globalSearchInput" placeholder="Cari barang..." autocomplete="off">
-                    
-                    <div id="globalSearchResults" class="search-results-list"></div>
-                </div>
+                <nav class="nav-links" id="navLinks">
+                    <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ url_for('daftar_barang') }}" class="nav-link">Daftar Barang</a>
+                    <a href="{{ url_for('laporan') }}" class="nav-link">Laporan</a>
+                </nav>
             </div>
 
-            {% if list_semua_barang %}
-            <script>
-                const GLOBAL_DATA_BARANG = [
-                    {% for barang in list_semua_barang %}
-                        {
-                            id: "{{ barang.id }}",
-                            nama: "{{ barang.nama_barang }}",
-                            stok: "{{ barang.stok }}",
+            <div class="nav-right">
+                <button class="header-icon-btn" id="searchToggle" title="Cari Barang">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="search-bar-container" id="searchBarContainer">
+        <div class="centered-content" style="position: relative; padding-top: 10px; padding-bottom: 10px;">
+            <input type="text" id="globalSearchInput" placeholder="Ketik nama barang untuk mencari..."
+                autocomplete="off">
+            <div id="globalSearchResults" class="search-results-list"></div>
+        </div>
+    </div>
+
+    <main class="main-content centered-content">
+
+        <div class="page-header-mobile">
+            <h1 class="app-title" style="margin-bottom: 20px;">{% block page_title %}Dashboard{% endblock %}</h1>
+        </div>
+
+        {% if list_semua_barang %}
+        <script>
+            const GLOBAL_DATA_BARANG = [
+                {% for barang in list_semua_barang %}
+            {
+                id: "{{ barang.id }}",
+                    nama: "{{ barang.nama_barang }}",
+                        stok: "{{ barang.stok }}",
                             satuan: "{{ barang.satuan }}"
-                        },
-                    {% endfor %}
-                ];
-            </script>
-            {% endif %}
+            },
+            {% endfor %}
+            ];
+        </script>
+        {% endif %}
 
-            {% block content %}
-            {% endblock %}
-            <footer class="app-footer">by ziel</footer>
-        </main> 
-    </div> {% block mobile_actions %}
-    {% endblock %}
+        {% block content %}
+        {% endblock %}
 
-    {% block modals %}
-    {% endblock %}
+        <footer class="app-footer">by ziel</footer>
+    </main>
+
+    {% block mobile_actions %}{% endblock %}
+    {% block modals %}{% endblock %}
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-
+    <script>
+        // Toggle Navigasi Mobile
+        document.getElementById('mobileMenuBtn').addEventListener('click', function () {
+            document.getElementById('navLinks').classList.toggle('show');
+        });
+    </script>
 </body>
-</html> 
+
+</html>
